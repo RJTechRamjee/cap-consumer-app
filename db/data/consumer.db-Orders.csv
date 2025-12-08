@@ -1,0 +1,9 @@
+ID;productID;quantity;customerName;orderDate;productName;productPrice;totalAmount
+a1b2c3d4-e5f6-7890-abcd-ef1234567890;prod-001;5;John Smith;2025-12-01T10:30:00Z;Laptop;1299.99;6499.95
+b2c3d4e5-f6a7-8901-bcde-f12345678901;prod-002;2;Sarah Johnson;2025-12-02T14:15:00Z;Wireless Mouse;29.99;59.98
+c3d4e5f6-a7b8-9012-cdef-123456789012;prod-003;10;Michael Brown;2025-12-03T09:45:00Z;USB Cable;9.99;99.90
+d4e5f6a7-b8c9-0123-def1-234567890123;prod-001;3;Emily Davis;2025-12-04T16:20:00Z;Laptop;1299.99;3899.97
+e5f6a7b8-c9d0-1234-ef12-345678901234;prod-004;1;David Wilson;2025-12-05T11:00:00Z;Monitor;449.99;449.99
+f6a7b8c9-d0e1-2345-f123-456789012345;prod-005;8;Lisa Anderson;2025-12-06T13:30:00Z;Keyboard;79.99;639.92
+a7b8c9d0-e1f2-3456-1234-567890123456;prod-002;4;James Martinez;2025-12-07T08:15:00Z;Wireless Mouse;29.99;119.96
+b8c9d0e1-f2a3-4567-2345-678901234567;prod-006;6;Jennifer Taylor;2025-12-08T10:45:00Z;Webcam;89.99;539.94

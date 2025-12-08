@@ -1,0 +1,42 @@
+### Test enrichOrderWithProduct action
+
+# First, get the list of orders to see available IDs
+GET http://localhost:4004/odata/v4/order/Orders
+
+###
+
+# Call the enrichOrderWithProduct action on a specific order
+# Replace the UUID with an actual order ID from your test data
+POST http://localhost:4004/odata/v4/order/Orders(a1b2c3d4-e5f6-7890-abcd-ef1234567890)/OrderService.enrichOrderWithProduct
+Content-Type: application/json
+
+###
+
+# Get the updated order to see the enriched data
+GET http://localhost:4004/odata/v4/order/Orders(a1b2c3d4-e5f6-7890-abcd-ef1234567890)
+
+###
+
+# Test with another order ID
+POST http://localhost:4004/odata/v4/order/Orders(b2c3d4e5-f6a7-8901-bcde-f12345678901)/OrderService.enrichOrderWithProduct
+Content-Type: application/json
+
+###
+
+# Create a new order and then enrich it
+POST http://localhost:4004/odata/v4/order/Orders
+Content-Type: application/json
+
+{
+  "productID": "prod-001",
+  "quantity": 3,
+  "customerName": "Test Customer"
+}
+
+###
+
+# Enrich the newly created order (replace UUID with the one from response above)
+POST http://localhost:4004/odata/v4/order/Orders(<NEW-ORDER-ID>)/OrderService.enrichOrderWithProduct
+Content-Type: application/json
+
+###

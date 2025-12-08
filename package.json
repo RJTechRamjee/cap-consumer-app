@@ -4,11 +4,12 @@
   "description": "CAP Consumer - calls Provider API via CDS remote service",
   "private": true,
   "dependencies": {
-    "@sap/cds": "^7",
+    "@sap/cds": "^8",
     "express": "^4"
   },
   "devDependencies": {
-    "@sap/cds-dk": "^7"
+    "@sap/cds-dk": "^9",
+    "sqlite3": "^5.1.7"
   },
   "scripts": {
     "start": "cds-serve"
