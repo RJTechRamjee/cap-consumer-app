@@ -1,0 +1,38 @@
+_schema-version: '3.3'
+ID: cap-consumer
+version: 1.0.0
+description: CAP Consumer Application
+
+parameters:
+  enable-parallel-deployments: true
+
+modules:
+  - name: cap-consumer-srv
+    type: nodejs
+    path: .
+    parameters:
+      buildpack: nodejs_buildpack
+      memory: 256M
+      disk-quota: 512M
+    build-parameters:
+      builder: npm
+    requires:
+      - name: cap-consumer-db
+      - name: cap-consumer-destination
+    provides:
+      - name: consumer-api
+        properties:
+          url: ${default-url}
+
+resources:
+  - name: cap-consumer-db
+    type: com.sap.xs.hdi-container
+    parameters:
+      service: hana
+      service-plan: hdi-shared
+  
+  - name: cap-consumer-destination
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: destination
+      service-plan: lite

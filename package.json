@@ -1,0 +1,33 @@
+{
+  "name": "cap-consumer",
+  "version": "1.0.0",
+  "description": "CAP Consumer - calls Provider API via CDS remote service",
+  "private": true,
+  "dependencies": {
+    "@sap/cds": "^7",
+    "express": "^4"
+  },
+  "devDependencies": {
+    "@sap/cds-dk": "^7"
+  },
+  "scripts": {
+    "start": "cds-serve"
+  },
+  "cds": {
+    "requires": {
+      "db": {
+        "kind": "sql"
+      },
+      "ProviderAPI": {
+        "kind": "odata-v4",
+        "model": "srv/external/CatalogService",
+        "[production]": {
+          "credentials": {
+            "destination": "CAP_PROVIDER_API",
+            "path": "/odata/v4/catalog"
+          }
+        }
+      }
+    }
+  }
+}
