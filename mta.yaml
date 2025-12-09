@@ -25,11 +25,6 @@ modules:
       - name: consumer-api
         properties:
           url: ${default-url}
-  - name: cap-consumer-srv
-    type: nodejs
-    path: srv
-    requires:
-      - name: cap-consumer-db
 
   - name: cap-consumer-db-deployer
     type: hdb
