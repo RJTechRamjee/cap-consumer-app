@@ -28,7 +28,7 @@ POST http://localhost:4004/odata/v4/order/Orders
 Content-Type: application/json
 
 {
-  "productID": "prod-001",
+  "productID": "550e8400-e29b-41d4-a716-446655440001",
   "quantity": 3,
   "customerName": "Test Customer"
 }

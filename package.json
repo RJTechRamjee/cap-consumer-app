@@ -4,10 +4,16 @@
   "description": "CAP Consumer - calls Provider API via CDS remote service",
   "private": true,
   "dependencies": {
-    "@sap/cds": "^8",
+    "@cap-js/hana": "^2",
+    "@sap-cloud-sdk/connectivity": "^4",
+    "@sap-cloud-sdk/http-client": "^4",
+    "@sap-cloud-sdk/resilience": "^4",
+    "@sap/cds": "^9",
+    "@sap/xssec": "^4",
     "express": "^4"
   },
   "devDependencies": {
+    "@cap-js/sqlite": "^2.1.0",
     "@sap/cds-dk": "^9",
     "sqlite3": "^5.1.7"
   },
@@ -17,18 +23,42 @@
   "cds": {
     "requires": {
       "db": {
-        "kind": "sql"
+        "kind": "sql",
+        "[hybrid]": {
+          "kind": "hana",
+          "vcap": {
+            "name": "cap-consumer-db"
+          }
+        }
       },
-      "ProviderAPI": {
+      "CatalogService": {
         "kind": "odata-v4",
         "model": "srv/external/CatalogService",
         "[production]": {
           "credentials": {
-            "destination": "CAP_PROVIDER_API",
+            "destination": "dest_cap_provider_api",
+            "path": "/odata/v4/catalog"
+          }
+        },
+        "[development]": {
+          "credentials": {
+            "destination": "dest_cap_provider_api",
+            "path": "/odata/v4/catalog"
+          }
+        },
+        "[hybrid]": {
+          "credentials": {
+            "destination": "dest_cap_provider_api",
             "path": "/odata/v4/catalog"
           }
         }
+      },
+      "[production]": {
+        "auth": "xsuaa"
       }
+    },
+    "build": {
+      "target": "gen"
     }
   }
 }

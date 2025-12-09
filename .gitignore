@@ -3,3 +3,5 @@ mta_archives/
 gen/
 *.db
 default-env.json
+# added by cds
+.cdsrc-private.json

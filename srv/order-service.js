@@ -1,10 +1,10 @@
 const cds = require('@sap/cds');
 
-module.exports = async function() {
+module.exports = async function () {
   const { Orders } = this.entities;
-  
+
   // Connect to the remote CAP Provider service
-  const providerAPI = await cds.connect.to('ProviderAPI');
+  const providerAPI = await cds.connect.to('CatalogService');
   const { Products } = providerAPI.entities;
 
   // Before creating an order, set the orderDate
@@ -13,65 +13,77 @@ module.exports = async function() {
   });
 
   // Action: Enrich order with product data from remote OData service
-  this.on('enrichOrderWithProduct', Orders, async (req) => {
-    const orderID = req.params[0].ID;
-    
-    const order = await SELECT.one.from(Orders).where({ ID: orderID });
-    if (!order) {
-      req.error(404, `Order ${orderID} not found`);
-      return;
-    }
+  // this.on('enrichOrderWithProduct', Orders, async (req) => {
+  //   const orderID = req.params[0].ID;
 
-    if (!order.productID) {
-      req.error(400, 'Order has no productID to enrich');
-      return;
-    }
+  //   const order = await SELECT.one.from(Orders).where({ ID: orderID });
+  //   if (!order) {
+  //     req.error(404, `Order ${orderID} not found`);
+  //     return;
+  //   }
 
-    try {
-      // Query the remote OData service using CDS query language
-      const product = await SELECT.one.from(Products)
-        .where({ ID: order.productID });
+  //   if (!order.productID) {
+  //     req.error(400, 'Order has no productID to enrich');
+  //     return;
+  //   }
 
-      if (!product) {
-        req.error(404, `Product ${order.productID} not found in remote service`);
-        return;
-      }
+  //   try {
+  //     // Query the remote OData service using CDS query language
+  //     const product = await SELECT.one.from(Products)
+  //       .where({ ID: order.productID });
 
-      const totalAmount = product.price * order.quantity;
+  //     if (!product) {
+  //       req.error(404, `Product ${order.productID} not found in remote service`);
+  //       return;
+  //     }
 
-      await UPDATE(Orders)
-        .set({
-          productName: product.name,
-          productPrice: product.price,
-          totalAmount: totalAmount
-        })
-        .where({ ID: orderID });
+  //     const totalAmount = product.price * order.quantity;
 
-      const updatedOrder = await SELECT.one.from(Orders).where({ ID: orderID });
-      return updatedOrder;
+  //     await UPDATE(Orders)
+  //       .set({
+  //         productName: product.name,
+  //         productPrice: product.price,
+  //         totalAmount: totalAmount
+  //       })
+  //       .where({ ID: orderID });
 
-    } catch (error) {
-      console.error('Error calling remote CAP service:', error);
-      req.error(502, `Failed to fetch product data: ${error.message}`);
-    }
-  });
+  //     const updatedOrder = await SELECT.one.from(Orders).where({ ID: orderID });
+  //     return updatedOrder;
+
+  //   } catch (error) {
+  //     console.error('Error calling remote CAP service:', error);
+  //     req.error(502, `Failed to fetch product data: ${error.message}`);
+  //   }
+  // });
 
   // Optional: Validate product exists before creating order
   this.before('CREATE', Orders, async (req) => {
     if (req.data.productID) {
       try {
-        const product = await SELECT.one.from(Products)
+        // const product = await SELECT.one.from(Products)
+        //   .where({ ID: req.data.productID });
+
+        // if (!product) {
+        //   req.error(400, `Product ${req.data.productID} does not exist`);
+        // }
+
+        // Use providerAPI.read() to query the remote service
+        const products = await providerAPI.read(Products)
           .where({ ID: req.data.productID });
-        
-        if (!product) {
+
+        // providerAPI.read() returns an array, so check length and get first item
+        if (!products || products.length === 0) {
           req.error(400, `Product ${req.data.productID} does not exist`);
+          return;
         }
-        
+
+        const product = products[0];
+
         // Pre-fill product data
         req.data.productName = product.name;
         req.data.productPrice = product.price;
         req.data.totalAmount = product.price * (req.data.quantity || 1);
-        
+
       } catch (error) {
         console.warn('Could not validate product:', error.message);
       }

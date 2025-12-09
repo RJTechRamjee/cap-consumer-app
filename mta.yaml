@@ -9,7 +9,7 @@ parameters:
 modules:
   - name: cap-consumer-srv
     type: nodejs
-    path: .
+    path: gen/srv
     parameters:
       buildpack: nodejs_buildpack
       memory: 256M
@@ -19,10 +19,24 @@ modules:
     requires:
       - name: cap-consumer-db
       - name: cap-consumer-destination
+      - name: cap-consumer-auth
     provides:
       - name: consumer-api
         properties:
           url: ${default-url}
+  - name: cap-consumer-srv
+    type: nodejs
+    path: srv
+    requires:
+      - name: cap-consumer-db
+
+  - name: cap-consumer-db-deployer
+    type: hdb
+    path: gen/db
+    parameters:
+      buildpack: nodejs_buildpack
+    requires:
+      - name: cap-consumer-db
 
 resources:
   - name: cap-consumer-db
@@ -30,9 +44,24 @@ resources:
     parameters:
       service: hana
       service-plan: hdi-shared
-  
+
   - name: cap-consumer-destination
     type: org.cloudfoundry.managed-service
     parameters:
       service: destination
       service-plan: lite
+  - name: cap-consumer-auth
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: xsuaa
+      service-plan: application
+      path: ./xs-security.json
+      config:
+        xsappname: cap-consumer-${org}-${space}
+        tenant-mode: dedicated
+build-parameters:
+  before-all:
+    - builder: custom
+      commands:
+        - npm ci
+        - npx cds build --production
