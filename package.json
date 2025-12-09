@@ -55,7 +55,9 @@
       },
       "[production]": {
         "auth": "xsuaa"
-      }
+      },
+      "connectivity": true,
+      "destinations": true
     },
     "build": {
       "target": "gen"

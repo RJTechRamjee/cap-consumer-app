@@ -2,7 +2,7 @@ namespace consumer.db;
 
 entity Orders {
   key ID              : UUID;
-      productID       : String(36);
+      productID       : UUID;
       quantity        : Integer;
       customerName    : String(100);
       orderDate       : DateTime;
