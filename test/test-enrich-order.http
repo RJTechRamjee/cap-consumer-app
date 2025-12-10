@@ -36,7 +36,7 @@ Content-Type: application/json
 ###
 
 # Enrich the newly created order (replace UUID with the one from response above)
-POST http://localhost:4004/odata/v4/order/Orders(<NEW-ORDER-ID>)/OrderService.enrichOrderWithProduct
+POST http://localhost:4004/odata/v4/order/Orders(f9739950-b32d-4db4-a7ad-5492390d292d)/OrderService.enrichOrderWithProduct
 Content-Type: application/json
 
 ###

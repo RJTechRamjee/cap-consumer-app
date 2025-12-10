@@ -12,6 +12,10 @@ module.exports = async function () {
     req.data.orderDate = new Date().toISOString();
   });
 
+  this.on('enrichOrderWithProduct', Orders, async (req) => {
+    // Example enrichment logic can be added here
+    console.log('Enriching order:', req.params[0].ID);
+  });
   // Validate product exists before creating order
   this.before('CREATE', Orders, async (req) => {
     if (req.data.productID) {

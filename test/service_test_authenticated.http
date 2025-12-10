@@ -1,0 +1,75 @@
+### XSUAA OAuth Configuration
+@tokenUrl = https://d78a3142trial.authentication.us10.hana.ondemand.com/oauth/token
+@clientId = sb-cap-consumer-d78a3142trial-dev!t520749
+@clientSecret = ca7ad5a1-bbad-4dab-9332-0d63df1418c0$IdkhqnZgYu8kQqOSpgPR47wutOUICILO4i7YkXwHWIU=
+
+### Service Configuration
+@baseUrl = https://d78a3142trial-dev-cap-consumer-srv.cfapps.us10-001.hana.ondemand.com/odata/v4/order
+@contentType = application/json
+
+### Step 1: Get OAuth Access Token
+# @name getToken
+POST {{tokenUrl}}
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=client_credentials
+&client_id={{clientId}}
+&client_secret={{clientSecret}}
+
+### Extract token for subsequent requests
+@accessToken = {{getToken.response.body.access_token}}
+
+###
+### AUTHENTICATED REQUESTS BELOW
+###
+
+### 1. Get all Orders
+GET {{baseUrl}}/Orders
+Authorization: Bearer {{accessToken}}
+Content-Type: {{contentType}}
+
+### 2. Create a new Order
+# @name createOrder
+POST {{baseUrl}}/Orders 
+Authorization: Bearer {{accessToken}}
+Content-Type: {{contentType}}
+
+{
+  "productID": "550e8400-e29b-41d4-a716-446655440001",
+  "quantity": 10,
+  "customerName": "Authenticated Customer"
+}
+
+### Extract ID from created order
+@createdOrderId = {{createOrder.response.body.ID}}
+
+### 3. Get the specific Order
+GET {{baseUrl}}/Orders({{createdOrderId}})
+Authorization: Bearer {{accessToken}}
+Content-Type: {{contentType}}
+
+### 4. Update the Order (Update quantity)
+PATCH {{baseUrl}}/Orders({{createdOrderId}})
+Authorization: Bearer {{accessToken}}
+Content-Type: {{contentType}}
+
+{
+  "quantity": 20
+}
+
+### 5. Call Action: Enrich Order with Product Details
+POST {{baseUrl}}/Orders({{createdOrderId}})/OrderService.enrichOrderWithProduct
+Authorization: Bearer {{accessToken}}
+Content-Type: {{contentType}}
+
+{}
+
+### 6. Verify Enriched Order
+GET {{baseUrl}}/Orders({{createdOrderId}})
+Authorization: Bearer {{accessToken}}
+Content-Type: {{contentType}}
+
+### 7. Delete the Order
+DELETE {{baseUrl}}/Orders({{createdOrderId}})
+Authorization: Bearer {{accessToken}}
+Content-Type: {{contentType}}
